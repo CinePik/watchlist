@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script is used to manage the seeding job for the CinePik Reviews application in the Kubernetes cluster.
+# This script is used to manage the seeding job for the CinePik Watchlist application in the Kubernetes cluster.
 # It can either delete and recreate the seeding job or just delete it based on the provided flag.
 #
 # Usage:
@@ -39,11 +39,11 @@ done
 
 # If cleanup mode is requested
 if [ $CLEAN_ONLY -eq 1 ]; then
-    kubectl delete job cinepik-reviews-seeding-job --ignore-not-found=true || exit_on_error "Failed to delete existing job"
+    kubectl delete job cinepik-watchlist-seeding-job --ignore-not-found=true || exit_on_error "Failed to delete existing job"
     echo "Seeding job deleted."
     exit 0
 fi
 
-kubectl delete job cinepik-reviews-seeding-job --ignore-not-found=true || exit_on_error "Failed to delete existing job"
+kubectl delete job cinepik-watchlist-seeding-job --ignore-not-found=true || exit_on_error "Failed to delete existing job"
 kubectl apply -f seed-job.yml || exit_on_error "Failed to apply new job"
 echo "Seeding job restarted."

@@ -11,9 +11,9 @@
   </a>
 </p>
 
-# CinePik Reviews
+# CinePik Watchlist
 
-Node.js microservice for user reviews.
+Node.js microservice for user watchlist.
 
 ## Installation
 
@@ -75,21 +75,21 @@ To run the app in a docker container, run the following commands.
 ```bash
 docker network create cinepik-network
 
-docker run -d --name cinepik-reviews-db  --env-file .env --network cinepik-network -p 5432:5432 postgres:15.5-alpine
+docker run -d --name cinepik-watchlist-db  --env-file .env --network cinepik-network -p 5432:5432 postgres:15.5-alpine
 
-docker build -t cinepik-reviews .
+docker build -t cinepik-watchlist .
 
-docker run -d -t --env-file .env --network cinepik-network -p 3001:3001 cinepik-reviews
+docker run -d -t --env-file .env --network cinepik-network -p 3001:3001 cinepik-watchlist
 ```
 
 To manually upload the image to Docker Hub, run the following commands.
 
 ```bash
-docker build -t cinepik-reviews .
+docker build -t cinepik-watchlist .
 
-docker tag cinepik-reviews:latest <dockerhub_username>/cinepik-reviews:latest
+docker tag cinepik-watchlist:latest <dockerhub_username>/cinepik-watchlist:latest
 
-docker push <dockerhub_username>/cinepik-reviews:latest
+docker push <dockerhub_username>/cinepik-watchlist:latest
 ```
 
 ### Docker Compose
@@ -133,8 +133,8 @@ kubectl create secret generic database-credentials --from-literal=DATABASE_URL=<
 We can create the deployment and service.
 
 ```bash
-kubectl apply -f k8s/cinepik-reviews.yml
-kubectl apply -f k8s/cinepik-reviews-svc.yml
+kubectl apply -f k8s/cinepik-watchlist.yml
+kubectl apply -f k8s/cinepik-watchlist-svc.yml
 ```
 
 ### Seed the database in Kubernetes
@@ -149,9 +149,9 @@ kubectl apply -f k8s/seed-job.yml
 
 ```bash
 kubectl get pods
-kubectl delete deployment cinepik-reviews-deployment
+kubectl delete deployment cinepik-watchlist-deployment
 kubectl delete configmap <configmap name>
-kubectl rollout restart deployment/cinepik-reviews-deployment
+kubectl rollout restart deployment/cinepik-watchlist-deployment
 kubectl logs <pod-id>
 kubectl describe secret <secret-name>
 kubectl get secret <secret-name>

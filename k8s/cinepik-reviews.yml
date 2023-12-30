@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cinepik-reviews-deployment
+  name: cinepik-watchlist-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cinepik-reviews
+      app: cinepik-watchlist
   template:
     metadata:
       labels:
-        app: cinepik-reviews
+        app: cinepik-watchlist
     spec:
       containers:
-        - image: sebam/cinepik-reviews:latest
-          name: cinepik-reviews
+        - image: sebam/cinepik-watchlist:latest
+          name: cinepik-watchlist
           resources:
             requests:
               cpu: 100m

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: cinepik-reviews
+  name: cinepik-watchlist
 spec:
   type: ClusterIP
   ports:
@@ -9,4 +9,4 @@ spec:
       protocol: TCP
       targetPort: 3002
   selector:
-    app: cinepik-reviews
+    app: cinepik-watchlist

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: cinepik-reviews
+    container_name: cinepik-watchlist
     build: .
     ports:
       - ${PORT:-3001}:${PORT:-3001}
@@ -17,7 +17,7 @@ services:
       - cinepik-network
 
   seed:
-    container_name: cinepik-reviews-seed
+    container_name: cinepik-watchlist-seed
     build: .
     command: npm run prisma:seed
     depends_on:
@@ -31,7 +31,7 @@ services:
       - cinepik-network
 
   db:
-    container_name: cinepik-reviews-db
+    container_name: cinepik-watchlist-db
     image: postgres:15.5-alpine
     ports:
       - '${DB_PORT}:${DB_PORT}'

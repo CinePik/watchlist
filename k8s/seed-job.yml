@@ -1,13 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: cinepik-reviews-seeding-job
+  name: cinepik-watchlist-seeding-job
 spec:
   template:
     spec:
       containers:
-        - name: cinepik-reviews-seeder
-          image: lzukanovic/cinepik-reviews:latest
+        - name: cinepik-watchlist-seeder
+          image: lzukanovic/cinepik-watchlist:latest
           command: ['npm', 'run', 'prisma:seed']
           env:
             - name: DATABASE_URL
