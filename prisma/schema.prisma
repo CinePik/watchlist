@@ -11,28 +11,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Watched {
-  userId               Int
-  movieId              Int
+model WatchedMovie {
+  userId           Int
+  movieId          Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  comments         Comment[]
+  @@id([userId, movieId])
+}
 
+model SavedMovie {
+  userId           Int
+  movieId          Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  @@id([userId, movieId])
+}
+
+model WatchedSeries {
+  userId           Int
+  seriesId         Int
+  season           Int
+  episode          Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  comments         Comment[]
+  @@id([userId, movieId])
+}
+
+model SavedSeries {
+  userId           Int
+  seriesId         Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
   @@id([userId, movieId])
 }
 
 model Comment {
-  userId               Int
-  movieId              Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  @@id([userId, movieId])
-}
-
-model Saved {
-  userId               Int
-  movieId              Int
-  runtimeMinutes   Int
+  id               Int      @id @default(autoincrement())
+  watchedMovieId?  Int
+  watchedSeriesId? Int
+  authorId         Int
+  Comment          String
+  watchedMovie?    WatchedMovie @relation(fields: [authorId], references: [id])
+  watchedSeries?   WatchedSeries @relation(fields: [authorId], references: [id])
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
