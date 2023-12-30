@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cinepik-reviews-seeding-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: cinepik-reviews-seeder
+          image: lzukanovic/cinepik-reviews:latest
+          command: ['npm', 'run', 'prisma:seed']
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: DATABASE_URL
+      restartPolicy: Never
+  backoffLimit: 2
