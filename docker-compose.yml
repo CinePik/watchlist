@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: cinepik-reviews
+    build: .
+    ports:
+      - ${PORT:-3001}:${PORT:-3001}
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    networks:
+      - cinepik-network
+
+  seed:
+    container_name: cinepik-reviews-seed
+    build: .
+    command: npm run prisma:seed
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    env_file:
+      - .env
+    networks:
+      - cinepik-network
+
+  db:
+    container_name: cinepik-reviews-db
+    image: postgres:15.5-alpine
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - cinepik-network
+
+volumes:
+  postgres_data:
+  node_modules:
+
+
+networks:
+  cinepik-network:
+    name: cinepik-network
+    external: true
