@@ -38,9 +38,9 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/watchlist-catalog:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/watchlist-catalog:${{ env.TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/watchlist-catalog:${{ steps.current-time.outputs.formattedTime }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-watchlist:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-watchlist:${{ env.TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-watchlist:${{ steps.current-time.outputs.formattedTime }}
 
       - name: Notify success
         if: success()
