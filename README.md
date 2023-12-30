@@ -1,73 +1,160 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="100" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+<p align="center">
+  <a href="https://github.com/CinePik/catalog/actions/workflows/ci.yml" target="_blank">
+    <img src="https://github.com/CinePik/catalog/actions/workflows/ci.yml/badge.svg" alt="Catalog CI Workflow Status" />
+  </a>
+  <a href="https://github.com/CinePik/catalog/actions/workflows/cd.yml" target="_blank">
+    <img src="https://github.com/CinePik/catalog/actions/workflows/cd.yml/badge.svg" alt="Catalog CD Workflow Status" />
+  </a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# CinePik Reviews
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Node.js microservice for user reviews.
 
 ## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # production mode
-$ npm run start:prod
+npm run start:prod
+```
+
+## Prisma
+
+If any changes are made to the schema.prisma file, run the following command to update the database.
+I creates a migration, updates the database (also seeds?), and updates the Prisma client.
+
+```bash
+npm run prisma:migrate:dev
+```
+
+If you only want to seed the database, run the following command.
+
+```bash
+npm run prisma:seed
+```
+
+To update the Prisma client run the following command.
+
+```bash
+npm run prisma:client
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
-## Support
+## Docker
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+To run the app in a docker container, run the following commands.
 
-## Stay in touch
+```bash
+docker network create cinepik-network
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+docker run -d --name cinepik-reviews-db  --env-file .env --network cinepik-network -p 5432:5432 postgres:15.5-alpine
 
-## License
+docker build -t cinepik-reviews .
 
-Nest is [MIT licensed](LICENSE).
+docker run -d -t --env-file .env --network cinepik-network -p 3001:3001 cinepik-reviews
+```
+
+To manually upload the image to Docker Hub, run the following commands.
+
+```bash
+docker build -t cinepik-reviews .
+
+docker tag cinepik-reviews:latest <dockerhub_username>/cinepik-reviews:latest
+
+docker push <dockerhub_username>/cinepik-reviews:latest
+```
+
+### Docker Compose
+
+You can also setup the database and application with docker-compose.
+
+```bash
+# Run the database and application
+docker-compose up --build db app
+# Trigger database seeding
+docker-compose up --build seed
+
+docker-compose down
+```
+
+## Kubernetes deployment
+
+### Setup configs
+
+Create config map for keycloak
+
+```bash
+kubectl create configmap keycloak-config --from-literal=KEYCLOAK_BASE_URL="http://cinepik-keycloak" --from-literal=KEYCLOAK_CLIENT_ID="nest-auth" --from-literal=KEYCLOAK_PORT=8080 --from-literal=KEYCLOAK_REALM="cinepik"
+```
+
+Create secret for keycloak
+
+```bash
+kubectl create secret generic keycloak-config --from-literal=KEYCLOAK_ADMIN="admin" --from-literal=KEYCLOAK_ADMIN_PASSWORD="<REPLACE_ME>" --from-literal=KEYCLOAK_CLIENT_SECRET="<REPLACE_ME>" --from-literal=KEYCLOAK_REALM_RSA_PUBLIC_KEY="<REPLACE_ME>"
+```
+
+Create a Secret for the database url environment variable in the deployment file.
+Replace the value in the <> with the appropriate value.
+
+```bash
+kubectl create secret generic database-credentials --from-literal=DATABASE_URL=<db_url>
+```
+
+### Apply changes
+
+We can create the deployment and service.
+
+```bash
+kubectl apply -f k8s/cinepik-reviews.yml
+kubectl apply -f k8s/cinepik-reviews-svc.yml
+```
+
+### Seed the database in Kubernetes
+
+To manually seed the database in Kubernetes, run the following command, which create a Job that runs the seed script.
+
+```bash
+kubectl apply -f k8s/seed-job.yml
+```
+
+### Other useful commands
+
+```bash
+kubectl get pods
+kubectl delete deployment cinepik-reviews-deployment
+kubectl delete configmap <configmap name>
+kubectl rollout restart deployment/cinepik-reviews-deployment
+kubectl logs <pod-id>
+kubectl describe secret <secret-name>
+kubectl get secret <secret-name>
+kubectl get service
+kubectl describe pods
+```
