@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  seed     = "prisma/seed.ts"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Watched {
+  userId               Int
+  movieId              Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@id([userId, movieId])
+}
+
+model Comment {
+  userId               Int
+  movieId              Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@id([userId, movieId])
+}
+
+model Saved {
+  userId               Int
+  movieId              Int
+  runtimeMinutes   Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
