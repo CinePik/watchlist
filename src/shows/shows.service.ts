@@ -1,26 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { CreateShowDto } from './dto/create-show.dto';
-import { UpdateShowDto } from './dto/update-show.dto';
+import { ShowComment } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateShowCommentDto } from './dto/request/create-comment.dto';
+import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
+import { UpdateShowWatchedDto } from './dto/request/update-watched.dto';
 
 @Injectable()
 export class ShowsService {
-  create(createShowDto: CreateShowDto) {
-    return 'This action adds a new show';
+  constructor(private prisma: PrismaService) {}
+
+  create(createShowCommentDto: CreateShowCommentDto): Promise<ShowComment> {
+    return this.prisma.showComment.create({ data: createShowCommentDto });
   }
 
-  findAll() {
-    return `This action returns all shows`;
+  findAll(): Promise<ShowComment[]> {
+    return this.prisma.showComment.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} show`;
+  update(
+    id: number,
+    updateShowCommentDto: UpdateShowCommentDto,
+  ): Promise<ShowComment> {
+    return this.prisma.showComment.update({
+      where: { id },
+      data: updateShowCommentDto,
+    });
   }
 
-  update(id: number, updateShowDto: UpdateShowDto) {
-    return `This action updates a #${id} show`;
+  updateWatched(
+    id: number,
+    updateShowWatchedDto: UpdateShowWatchedDto,
+  ): Promise<any> {
+    return this.prisma.show.update({
+      where: { id },
+      data: updateShowWatchedDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} show`;
+  remove(id: number): Promise<ShowComment> {
+    return this.prisma.showComment.delete({ where: { id } });
   }
 }

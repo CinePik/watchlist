@@ -10,32 +10,32 @@ import {
   Min,
 } from 'class-validator';
 
-export class CreateMovieCommentDto {
+export class UpdateShowCommentDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'User identifier.',
+    description: 'Show episode.',
   })
-  userId: number;
+  episode: number;
 
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Movie identifier.',
+    description: 'Show season.',
   })
-  movieId: number;
+  season: number;
 
   @IsNumber()
   @Min(0)
   @Max(5)
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
-    description: 'Movie rating.',
+    description: 'Show rating.',
   })
   rating: number;
 
   @IsAlphanumeric()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     description: 'User comment.',
   })
@@ -44,7 +44,7 @@ export class CreateMovieCommentDto {
   @IsBoolean()
   @IsOptional()
   @ApiProperty({
-    description: 'Has the user watched the movie.',
+    description: 'Has the user watched the show.',
   })
   watched: boolean;
 }

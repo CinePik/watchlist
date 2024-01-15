@@ -1,26 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCommentDto } from './dto/request/create-comment.dto';
-import { UpdateMovieDto } from './dto/request/update-movie.dto';
-
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
+import { MovieComment } from '@prisma/client';
+import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
+import { UpdateMovieWatchedDto } from './dto/request/update-watched.dto';
 @Injectable()
 export class MoviesService {
-  create(createMovieDto: CreateCommentDto) {
-    return 'This action adds a new movie';
+  constructor(private prisma: PrismaService) {}
+
+  create(createMovieCommentDto: CreateMovieCommentDto): Promise<MovieComment> {
+    return this.prisma.movieComment.create({ data: createMovieCommentDto });
   }
 
-  findAll() {
-    return `This action returns all movies`;
+  findAll(): Promise<MovieComment[]> {
+    return this.prisma.movieComment.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  update(
+    id: number,
+    updateMovieCommentDto: UpdateMovieCommentDto,
+  ): Promise<MovieComment> {
+    return this.prisma.movieComment.update({
+      where: { id },
+      data: updateMovieCommentDto,
+    });
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
+  updateWatched(
+    id: number,
+    updateMovieCommentDto: UpdateMovieWatchedDto,
+  ): Promise<any> {
+    return this.prisma.movie.update({
+      where: { id },
+      data: updateMovieCommentDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} movie`;
+  remove(id: number): Promise<MovieComment> {
+    return this.prisma.movieComment.delete({ where: { id } });
   }
 }

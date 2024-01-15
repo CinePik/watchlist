@@ -1,50 +1,44 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsAlphanumeric,
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  Max,
-  Min,
-} from 'class-validator';
+import {} from 'class-validator';
 
-export class CreateMovieCommentDto {
-  @IsInt()
-  @IsNotEmpty()
+export class MovieCommentResponseDto {
+  @ApiProperty({
+    description: 'Comment identifier.',
+  })
+  id: number;
+
   @ApiProperty({
     description: 'User identifier.',
   })
   userId: number;
 
-  @IsInt()
-  @IsNotEmpty()
   @ApiProperty({
     description: 'Movie identifier.',
   })
   movieId: number;
 
-  @IsNumber()
-  @Min(0)
-  @Max(5)
-  @IsNotEmpty()
   @ApiProperty({
     description: 'Movie rating.',
   })
   rating: number;
 
-  @IsAlphanumeric()
-  @IsNotEmpty()
   @ApiProperty({
     description: 'User comment.',
   })
   comment: string;
 
-  @IsBoolean()
-  @IsOptional()
   @ApiProperty({
     description: 'Has the user watched the movie.',
   })
   watched: boolean;
+
+  @ApiProperty({
+    description: 'Movie creation date.',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Movie update date.',
+  })
+  updatedAt: Date;
 }
