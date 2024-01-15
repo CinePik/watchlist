@@ -1,29 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 export class UpdateShowCommentDto {
-  @IsInt()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Show episode.',
-  })
-  episode: number;
-
-  @IsInt()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Show season.',
-  })
-  season: number;
-
   @IsNumber()
   @Min(0)
   @Max(5)
@@ -38,11 +16,4 @@ export class UpdateShowCommentDto {
     description: 'User comment.',
   })
   comment: string;
-
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Has the user watched the show.',
-  })
-  watched: boolean;
 }

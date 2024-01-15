@@ -56,7 +56,13 @@ export class ShowsService {
   }
 
   findAll(showId: number): Promise<ShowComment[]> {
-    return this.prisma.showComment.findMany({ where: { showId } });
+    return this.prisma.showComment.findMany({
+      where: {
+        show: {
+          id: showId,
+        },
+      },
+    });
   }
 
   update(
@@ -65,17 +71,33 @@ export class ShowsService {
   ): Promise<ShowComment> {
     return this.prisma.showComment.update({
       where: { id },
-      data: updateShowCommentDto,
+      data: {
+        comment: updateShowCommentDto.comment,
+        rating: updateShowCommentDto.rating,
+      },
     });
   }
 
-  updateWatched(
-    id: number,
+  async updateWatched(
     updateShowWatchedDto: UpdateShowWatchedDto,
   ): Promise<any> {
+    const show = await this.prisma.show.findFirst({
+      where: {
+        AND: [
+          { showId: updateShowWatchedDto.showId },
+          { userId: updateShowWatchedDto.userId },
+          { episode: updateShowWatchedDto.episode },
+          { season: updateShowWatchedDto.season },
+        ],
+      },
+    });
     return this.prisma.show.update({
-      where: { id },
-      data: updateShowWatchedDto,
+      where: {
+        id: show.id,
+      },
+      data: {
+        watched: updateShowWatchedDto.watched,
+      },
     });
   }
 

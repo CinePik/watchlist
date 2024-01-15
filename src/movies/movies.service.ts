@@ -4,6 +4,7 @@ import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
 import { MovieComment } from '@prisma/client';
 import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
 import { UpdateMovieWatchedDto } from './dto/request/update-watched.dto';
+import { Movie } from './entities/movie.entity';
 @Injectable()
 export class MoviesService {
   constructor(private prisma: PrismaService) {}
@@ -34,7 +35,13 @@ export class MoviesService {
   }
 
   findAll(movieId: number): Promise<MovieComment[]> {
-    return this.prisma.movieComment.findMany({ where: { movieId } });
+    return this.prisma.movieComment.findMany({
+      where: {
+        movie: {
+          id: movieId,
+        },
+      },
+    });
   }
 
   update(
@@ -49,11 +56,13 @@ export class MoviesService {
 
   updateWatched(
     id: number,
-    updateMovieCommentDto: UpdateMovieWatchedDto,
+    updateMovieWatchedDto: UpdateMovieWatchedDto,
   ): Promise<any> {
     return this.prisma.movie.update({
       where: { id },
-      data: updateMovieCommentDto,
+      data: {
+        watched: updateMovieWatchedDto.watched,
+      },
     });
   }
 

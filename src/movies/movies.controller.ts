@@ -101,10 +101,10 @@ export class MoviesController {
   @Roles({ roles: ['realm:app-admin'] })
   @ApiBearerAuth()
   updateWatched(
-    @Param('id') id: string,
+    @Param('id') movieId: string,
     @Body() updateMovieWatchedDto: UpdateMovieWatchedDto,
   ): Promise<any> {
-    return this.moviesService.updateWatched(+id, updateMovieWatchedDto);
+    return this.moviesService.updateWatched(+movieId, updateMovieWatchedDto);
   }
 
   @Delete(':id')

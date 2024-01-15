@@ -5,16 +5,30 @@ export class UpdateShowWatchedDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Show identifier.',
+    description: 'User identifier.',
   })
-  movieId: number;
+  userId: number;
 
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'User identifier.',
+    description: 'Show identifier.',
   })
-  userId: number;
+  showId: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Show episode.',
+  })
+  episode: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Show season.',
+  })
+  season: number;
 
   @IsBoolean()
   @IsNotEmpty()

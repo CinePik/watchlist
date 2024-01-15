@@ -88,12 +88,14 @@ export class ShowsController {
   }
 
   @Patch('watched/:id')
+  // Path id parameter is not used, but it is required by NestJS
   @ApiOkResponse({
     description: 'Show watched successfully updated.',
   })
   @ApiOperation({
     summary: 'Updates show watched status',
-    description: 'Updates show watched status for a specific show.',
+    description:
+      'Updates show watched status for a specific show. !!!Path id parameter is not used, but it is required by NestJS!!!',
   })
   @ApiUnauthorizedResponse({
     description: 'User not authorized correctly.',
@@ -101,10 +103,9 @@ export class ShowsController {
   @Roles({ roles: ['realm:app-admin'] })
   @ApiBearerAuth()
   updateWatched(
-    @Param('id') id: string,
     @Body() updateShowWatchedDto: UpdateShowWatchedDto,
   ): Promise<any> {
-    return this.showsService.updateWatched(+id, updateShowWatchedDto);
+    return this.showsService.updateWatched(updateShowWatchedDto);
   }
 
   @Delete(':id')

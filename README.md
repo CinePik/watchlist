@@ -15,6 +15,12 @@
 
 Node.js microservice for user watchlist.
 
+## Documentation
+
+OpenAPI documentation available at [http://localhost:3002/api](http://localhost:3002/api).  
+For accessing secured endpoints add your `access_token` provided to you at login to the `Authorization` header.
+
+
 ## Installation
 
 ```bash

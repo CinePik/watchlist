@@ -16,11 +16,4 @@ export class UpdateMovieCommentDto {
     description: 'User comment.',
   })
   comment: string;
-
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Has the user watched the movie.',
-  })
-  watched: boolean;
 }

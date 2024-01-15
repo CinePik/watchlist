@@ -5,7 +5,7 @@ services:
     container_name: cinepik-watchlist
     build: .
     ports:
-      - ${PORT:-3001}:${PORT:-3001}
+      - ${NODE_PORT}:${NODE_PORT}
     depends_on:
       - db
     volumes:
