@@ -16,20 +16,6 @@ services:
     networks:
       - cinepik-network
 
-  seed:
-    container_name: cinepik-watchlist-seed
-    build: .
-    command: npm run prisma:seed
-    depends_on:
-      - db
-    volumes:
-      - .:/app
-      - node_modules:/app/node_modules
-    env_file:
-      - .env
-    networks:
-      - cinepik-network
-
   db:
     container_name: cinepik-watchlist-db
     image: postgres:15.5-alpine

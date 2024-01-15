@@ -118,7 +118,7 @@ kubectl create configmap keycloak-config --from-literal=KEYCLOAK_BASE_URL="http:
 Create secret for keycloak
 
 ```bash
-kubectl create secret generic keycloak-config --from-literal=KEYCLOAK_ADMIN="admin" --from-literal=KEYCLOAK_ADMIN_PASSWORD="<REPLACE_ME>" --from-literal=KEYCLOAK_CLIENT_SECRET="<REPLACE_ME>" --from-literal=KEYCLOAK_REALM_RSA_PUBLIC_KEY="<REPLACE_ME>"
+kubectl create secret generic keycloak-credentials --from-literal=KEYCLOAK_ADMIN="admin" --from-literal=KEYCLOAK_ADMIN_PASSWORD="<REPLACE_ME>" --from-literal=KEYCLOAK_CLIENT_SECRET="<REPLACE_ME>" --from-literal=KEYCLOAK_REALM_RSA_PUBLIC_KEY="<REPLACE_ME>"
 ```
 
 Create a Secret for the database url environment variable in the deployment file.
