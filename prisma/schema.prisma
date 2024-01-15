@@ -38,6 +38,7 @@ model MovieComment {
   id               Int      @id @default(autoincrement())
   movieId          Int
   comment          String
+  rating           Float?
   movie            Movie    @relation(fields: [movieId], references: [id])
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -48,6 +49,7 @@ model ShowComment {
   id               Int      @id @default(autoincrement())
   showId  	       Int
   comment          String
+  rating           Float?
   show             Show    @relation(fields: [showId], references: [id])
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
