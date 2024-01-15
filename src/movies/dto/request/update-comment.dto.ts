@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsAlphanumeric,
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 export class UpdateMovieCommentDto {
   @IsNumber()
@@ -18,7 +11,6 @@ export class UpdateMovieCommentDto {
   })
   rating: number;
 
-  @IsAlphanumeric()
   @IsOptional()
   @ApiProperty({
     description: 'User comment.',

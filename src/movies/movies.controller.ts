@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import {
@@ -21,7 +22,7 @@ import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
 import { MovieComment } from '@prisma/client';
 import { UpdateMovieWatchedDto } from './dto/request/update-watched.dto';
 import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
-import { Roles } from 'nest-keycloak-connect';
+import { Roles, Unprotected } from 'nest-keycloak-connect';
 import { MovieCommentResponseDto } from './dto/response/comment.dto';
 
 @Controller('movies')
@@ -36,6 +37,7 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
+  @Unprotected()
   @ApiOkResponse({
     description: 'Movie comment successfully created.',
     type: [MovieCommentResponseDto],
@@ -51,16 +53,17 @@ export class MoviesController {
   }
 
   @Get()
+  @Unprotected()
   @ApiOkResponse({
-    description: 'Movie comment successfully found.',
+    description: 'Movie comments successfully found.',
     type: [MovieCommentResponseDto],
   })
   @ApiOperation({
     summary: 'Returns all movie comments',
     description: 'Returns all movies comments for a specific movie.',
   })
-  findAll() {
-    return this.moviesService.findAll();
+  findAll(@Query('movieId') movieId: string) {
+    return this.moviesService.findAll(+movieId);
   }
 
   @Patch(':id')

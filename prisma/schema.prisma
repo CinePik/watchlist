@@ -23,15 +23,16 @@ model Movie {
 }
 
 model Show {
-  id               Int      @id
+  id               Int    @id @default(autoincrement())
+  showId           Int
   userId           Int
   season           Int
   episode          Int
   showComments     ShowComment[]
-  watched          Boolean @default(false) 
+  watched          Boolean @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  @@unique([userId, id, season, episode])
+  @@unique([userId, showId, season, episode])
 }
 
 model MovieComment {

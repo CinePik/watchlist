@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,7 +18,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ShowComment } from '@prisma/client';
-import { Roles } from 'nest-keycloak-connect';
+import { Roles, Unprotected } from 'nest-keycloak-connect';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
 import { UpdateShowWatchedDto } from './dto/request/update-watched.dto';
@@ -36,6 +37,7 @@ export class ShowsController {
   constructor(private readonly showsService: ShowsService) {}
 
   @Post()
+  @Unprotected()
   @ApiOkResponse({
     description: 'Show comment successfully created.',
     type: [ShowCommentResponseDto],
@@ -51,6 +53,7 @@ export class ShowsController {
   }
 
   @Get()
+  @Unprotected()
   @ApiOkResponse({
     description: 'Show comment successfully found.',
     type: [ShowCommentResponseDto],
@@ -59,8 +62,8 @@ export class ShowsController {
     summary: 'Returns all show comments',
     description: 'Returns all shows comments for a specific show.',
   })
-  findAll() {
-    return this.showsService.findAll();
+  findAll(@Query('showId') showId: string) {
+    return this.showsService.findAll(+showId);
   }
 
   @Patch(':id')

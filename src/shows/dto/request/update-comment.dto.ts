@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsAlphanumeric,
   IsBoolean,
   IsInt,
   IsNotEmpty,
@@ -34,7 +33,6 @@ export class UpdateShowCommentDto {
   })
   rating: number;
 
-  @IsAlphanumeric()
   @IsOptional()
   @ApiProperty({
     description: 'User comment.',

@@ -8,12 +8,33 @@ import { UpdateMovieWatchedDto } from './dto/request/update-watched.dto';
 export class MoviesService {
   constructor(private prisma: PrismaService) {}
 
-  create(createMovieCommentDto: CreateMovieCommentDto): Promise<MovieComment> {
-    return this.prisma.movieComment.create({ data: createMovieCommentDto });
+  async create(
+    createMovieCommentDto: CreateMovieCommentDto,
+  ): Promise<MovieComment> {
+    if (
+      (await this.prisma.movie.count({
+        where: { id: createMovieCommentDto.movieId },
+      })) === 0
+    ) {
+      await this.prisma.movie.create({
+        data: {
+          id: createMovieCommentDto.movieId,
+          watched: createMovieCommentDto.watched,
+          userId: createMovieCommentDto.userId,
+        },
+      });
+    }
+    return this.prisma.movieComment.create({
+      data: {
+        movieId: createMovieCommentDto.movieId,
+        comment: createMovieCommentDto.comment,
+        rating: createMovieCommentDto.rating,
+      },
+    });
   }
 
-  findAll(): Promise<MovieComment[]> {
-    return this.prisma.movieComment.findMany();
+  findAll(movieId: number): Promise<MovieComment[]> {
+    return this.prisma.movieComment.findMany({ where: { movieId } });
   }
 
   update(

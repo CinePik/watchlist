@@ -9,12 +9,54 @@ import { UpdateShowWatchedDto } from './dto/request/update-watched.dto';
 export class ShowsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createShowCommentDto: CreateShowCommentDto): Promise<ShowComment> {
-    return this.prisma.showComment.create({ data: createShowCommentDto });
+  async create(
+    createShowCommentDto: CreateShowCommentDto,
+  ): Promise<ShowComment> {
+    let show;
+    if (
+      (await this.prisma.show.count({
+        where: {
+          AND: [
+            { showId: createShowCommentDto.showId },
+            { userId: createShowCommentDto.userId },
+            { episode: createShowCommentDto.episode },
+            { season: createShowCommentDto.season },
+          ],
+        },
+      })) === 0
+    ) {
+      show = await this.prisma.show.create({
+        data: {
+          showId: createShowCommentDto.showId,
+          watched: createShowCommentDto.watched,
+          userId: createShowCommentDto.userId,
+          episode: createShowCommentDto.episode,
+          season: createShowCommentDto.season,
+        },
+      });
+    } else {
+      show = await this.prisma.show.findFirst({
+        where: {
+          AND: [
+            { showId: createShowCommentDto.showId },
+            { userId: createShowCommentDto.userId },
+            { episode: createShowCommentDto.episode },
+            { season: createShowCommentDto.season },
+          ],
+        },
+      });
+    }
+    return this.prisma.showComment.create({
+      data: {
+        showId: show.id,
+        comment: createShowCommentDto.comment,
+        rating: createShowCommentDto.rating,
+      },
+    });
   }
 
-  findAll(): Promise<ShowComment[]> {
-    return this.prisma.showComment.findMany();
+  findAll(showId: number): Promise<ShowComment[]> {
+    return this.prisma.showComment.findMany({ where: { showId } });
   }
 
   update(
