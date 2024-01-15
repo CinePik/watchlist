@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { KeycloakModule } from './keycloak/keycloak.module';
+import { MoviesModule } from './movies/movies.module';
+import { ShowsModule } from './shows/shows.module';
 
 @Module({
   imports: [
@@ -11,6 +13,8 @@ import { KeycloakModule } from './keycloak/keycloak.module';
       isGlobal: true,
     }),
     KeycloakModule,
+    MoviesModule,
+    ShowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
