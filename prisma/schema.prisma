@@ -15,7 +15,6 @@ model Movie {
   id               Int      @id
   userId           Int
   movieComments    MovieComment[]
-  watched          Boolean @default(false) 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
  
@@ -29,7 +28,6 @@ model Show {
   season           Int
   episode          Int
   showComments     ShowComment[]
-  watched          Boolean @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   @@unique([userId, showId, season, episode])
@@ -40,7 +38,7 @@ model MovieComment {
   movieId          Int
   comment          String
   rating           Float?
-  movie            Movie    @relation(fields: [movieId], references: [id])
+  movie            Movie    @relation(fields: [movieId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -51,7 +49,7 @@ model ShowComment {
   showId  	       Int
   comment          String
   rating           Float?
-  show             Show    @relation(fields: [showId], references: [id])
+  show             Show    @relation(fields: [showId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

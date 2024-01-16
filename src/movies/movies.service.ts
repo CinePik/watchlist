@@ -1,26 +1,53 @@
 import { Injectable } from '@nestjs/common';
+import { Movie, MovieComment } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AddMovieWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
-import { MovieComment } from '@prisma/client';
 import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
-import { UpdateMovieWatchedDto } from './dto/request/update-watched.dto';
-import { Movie } from './entities/movie.entity';
+
 @Injectable()
 export class MoviesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
+  async addMovieWatchlist(
+    addMovieWatchlistDto: AddMovieWatchlistDto,
+  ): Promise<Movie> {
+    return await this.prisma.movie.create({
+      data: {
+        id: addMovieWatchlistDto.movieId,
+        userId: addMovieWatchlistDto.userId,
+      },
+    });
+  }
+
+  getMovieWatchlist(userId: number): Promise<Movie[]> {
+    return this.prisma.movie.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  removeMovieWatchlist(id: number): Promise<Movie> {
+    return this.prisma.movie.delete({ where: { id } });
+  }
+
+  async createMovieComment(
     createMovieCommentDto: CreateMovieCommentDto,
   ): Promise<MovieComment> {
     if (
       (await this.prisma.movie.count({
-        where: { id: createMovieCommentDto.movieId },
+        where: {
+          AND: [
+            { id: createMovieCommentDto.movieId },
+            { userId: createMovieCommentDto.userId },
+          ],
+        },
       })) === 0
     ) {
       await this.prisma.movie.create({
         data: {
           id: createMovieCommentDto.movieId,
-          watched: createMovieCommentDto.watched,
           userId: createMovieCommentDto.userId,
         },
       });
@@ -34,7 +61,7 @@ export class MoviesService {
     });
   }
 
-  findAll(movieId: number): Promise<MovieComment[]> {
+  findAllMovieComments(movieId: number): Promise<MovieComment[]> {
     return this.prisma.movieComment.findMany({
       where: {
         movie: {
@@ -51,18 +78,6 @@ export class MoviesService {
     return this.prisma.movieComment.update({
       where: { id },
       data: updateMovieCommentDto,
-    });
-  }
-
-  updateWatched(
-    id: number,
-    updateMovieWatchedDto: UpdateMovieWatchedDto,
-  ): Promise<any> {
-    return this.prisma.movie.update({
-      where: { id },
-      data: {
-        watched: updateMovieWatchedDto.watched,
-      },
     });
   }
 

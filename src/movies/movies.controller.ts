@@ -1,29 +1,28 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Query,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { MoviesService } from './movies.service';
 import {
-  ApiTags,
-  ApiInternalServerErrorResponse,
   ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiTags,
   ApiUnauthorizedResponse,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
-import { MovieComment } from '@prisma/client';
-import { UpdateMovieWatchedDto } from './dto/request/update-watched.dto';
-import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
+import { Movie, MovieComment } from '@prisma/client';
 import { Roles, Unprotected } from 'nest-keycloak-connect';
+import { AddMovieWatchlistDto } from './dto/request/add-watchlist.dto';
+import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
+import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
 import { MovieCommentResponseDto } from './dto/response/comment.dto';
+import { MoviesService } from './movies.service';
 
 @Controller('movies')
 @ApiTags('movies')
@@ -36,7 +35,50 @@ import { MovieCommentResponseDto } from './dto/response/comment.dto';
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  @Post()
+  @Post('watchlist')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Movie added to the watchlist successfully.',
+  })
+  @ApiOperation({
+    summary: 'Add a movie to the watchlist',
+    description: 'Adds a movie to the user watchlist.',
+  })
+  addMovieWatchlist(
+    @Body() addMovieWatchlistDto: AddMovieWatchlistDto,
+  ): Promise<Movie> {
+    return this.moviesService.addMovieWatchlist(addMovieWatchlistDto);
+  }
+
+  @Delete('watchlist')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Movie delete from the watchlist successfully.',
+  })
+  @ApiOperation({
+    summary: 'Deletes a movie from the watchlist',
+    description: 'Deletes a movie from the user watchlist.',
+  })
+  @ApiBearerAuth()
+  removeMovieWatchlist(@Param('id') id: string): Promise<Movie> {
+    return this.moviesService.removeMovieWatchlist(+id);
+  }
+
+  @Get('watchlist')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Movie watchlist successfully found.',
+    type: [MovieCommentResponseDto],
+  })
+  @ApiOperation({
+    summary: 'Returns all movies on the watchlist',
+    description: 'Returns all movies on the user watchlist.',
+  })
+  getMovieWatchlist(@Param('userId') userId: string) {
+    return this.moviesService.getMovieWatchlist(+userId);
+  }
+
+  @Post('comment')
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie comment successfully created.',
@@ -46,13 +88,13 @@ export class MoviesController {
     summary: 'Create movie comment',
     description: 'Creates a user movie comment.',
   })
-  create(
+  createMovieComment(
     @Body() createMovieCommentDto: CreateMovieCommentDto,
   ): Promise<MovieComment> {
-    return this.moviesService.create(createMovieCommentDto);
+    return this.moviesService.createMovieComment(createMovieCommentDto);
   }
 
-  @Get()
+  @Get('comment')
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie comments successfully found.',
@@ -62,11 +104,11 @@ export class MoviesController {
     summary: 'Returns all movie comments',
     description: 'Returns all movies comments for a specific movie.',
   })
-  findAll(@Query('movieId') movieId: string) {
-    return this.moviesService.findAll(+movieId);
+  findAllMovieComments(@Param('movieId') movieId: string) {
+    return this.moviesService.findAllMovieComments(+movieId);
   }
 
-  @Patch(':id')
+  @Patch('comment/:id')
   @ApiOkResponse({
     description: 'Movie comment successfully updated.',
     type: [MovieCommentResponseDto],
@@ -87,27 +129,7 @@ export class MoviesController {
     return this.moviesService.update(+id, updateMovieDto);
   }
 
-  @Patch('watched/:id')
-  @ApiOkResponse({
-    description: 'Movie watched successfully updated.',
-  })
-  @ApiOperation({
-    summary: 'Updates movie watched status',
-    description: 'Updates movie watched status for a specific movie.',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'User not authorized correctly.',
-  })
-  @Roles({ roles: ['realm:app-admin'] })
-  @ApiBearerAuth()
-  updateWatched(
-    @Param('id') movieId: string,
-    @Body() updateMovieWatchedDto: UpdateMovieWatchedDto,
-  ): Promise<any> {
-    return this.moviesService.updateWatched(+movieId, updateMovieWatchedDto);
-  }
-
-  @Delete(':id')
+  @Delete('comment/:id')
   @ApiOkResponse({
     description: 'Movie comment successfully deleted.',
     type: [MovieCommentResponseDto],
