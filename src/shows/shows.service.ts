@@ -83,11 +83,16 @@ export class ShowsService {
     });
   }
 
-  findAllShowComments(showId: number): Promise<ShowComment[]> {
+  findAllShowComments(
+    userId: number,
+    showId: number,
+    season: number,
+    episode: number,
+  ): Promise<ShowComment[]> {
     return this.prisma.showComment.findMany({
       where: {
         show: {
-          showId: showId,
+          AND: [{ showId }, { userId }, { episode }, { season }],
         },
       },
     });

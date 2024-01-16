@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -52,6 +53,7 @@ export class ShowsController {
   }
 
   @Delete('watchlist/:id')
+  @Unprotected()
   @ApiOkResponse({
     description: 'Show deleted from the watchlist successfully.',
   })
@@ -59,12 +61,15 @@ export class ShowsController {
     summary: 'Deletes a show from the watchlist',
     description: 'Deletes a show from the user watchlist.',
   })
-  @ApiBearerAuth()
-  removeShowWatchlist(@Param('id') id: string): Promise<Show> {
-    return this.showsService.removeShowWatchlist(+id);
+  removeShowWatchlist(@Param('id') id: string): Promise<any> {
+    try {
+      return this.showsService.removeShowWatchlist(+id);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  @Get('watchlist')
+  @Get('watchlist/:userId')
   @Unprotected()
   @ApiOkResponse({
     description: 'Show watchlist successfully found.',
@@ -77,7 +82,7 @@ export class ShowsController {
     return this.showsService.getShowWatchlist(+userId);
   }
 
-  @Post('comment')
+  @Post('comments')
   @Unprotected()
   @ApiOkResponse({
     description: 'Show comment successfully created.',
@@ -93,7 +98,7 @@ export class ShowsController {
     return this.showsService.createShowComment(createShowCommentDto);
   }
 
-  @Get('comment')
+  @Get('comments')
   @Unprotected()
   @ApiOkResponse({
     description: 'Show comment successfully found.',
@@ -103,11 +108,21 @@ export class ShowsController {
     summary: 'Returns all show comments',
     description: 'Returns all shows comments for a specific show.',
   })
-  findAll(@Query('showId') showId: string) {
-    return this.showsService.findAllShowComments(+showId);
+  findAll(
+    @Query('userId') userId: string,
+    @Query('showId') showId: string,
+    @Query('season') season: string,
+    @Query('episode') episode: string,
+  ) {
+    return this.showsService.findAllShowComments(
+      +userId,
+      +showId,
+      +season,
+      +episode,
+    );
   }
 
-  @Patch('comment/:id')
+  @Patch('comments/:id')
   @ApiOkResponse({
     description: 'Show comment successfully updated.',
     type: [ShowCommentResponseDto],
@@ -128,7 +143,7 @@ export class ShowsController {
     return this.showsService.updateShowComment(+id, updateShowDto);
   }
 
-  @Delete('comment/:id')
+  @Delete('comments/:id')
   @ApiOkResponse({
     description: 'Show comment successfully deleted.',
     type: [ShowCommentResponseDto],

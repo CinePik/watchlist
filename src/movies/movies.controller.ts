@@ -59,7 +59,6 @@ export class MoviesController {
     summary: 'Deletes a movie from the watchlist',
     description: 'Deletes a movie from the user watchlist.',
   })
-  @ApiBearerAuth()
   removeMovieWatchlist(@Param('id') id: string): Promise<Movie> {
     return this.moviesService.removeMovieWatchlist(+id);
   }

@@ -14,13 +14,6 @@ export class AddShowWatchlistDto {
   @ApiProperty({
     description: 'Show identifier.',
   })
-  movieId: number;
-
-  @IsInt()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Show identifier.',
-  })
   showId: number;
 
   @IsInt()
