@@ -28,11 +28,6 @@ export class MovieCommentResponseDto {
   comment: string;
 
   @ApiProperty({
-    description: 'Has the user watched the movie.',
-  })
-  watched: boolean;
-
-  @ApiProperty({
     description: 'Movie creation date.',
   })
   createdAt: Date;

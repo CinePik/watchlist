@@ -1,13 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
 
 export class CreateMovieCommentDto {
   @IsInt()
@@ -38,11 +30,4 @@ export class CreateMovieCommentDto {
     description: 'User comment.',
   })
   comment: string;
-
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Has the user watched the movie.',
-  })
-  watched: boolean;
 }

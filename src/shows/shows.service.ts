@@ -1,15 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { ShowComment } from '@prisma/client';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Show, ShowComment } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AddShowWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
-import { UpdateShowWatchedDto } from './dto/request/update-watched.dto';
 
 @Injectable()
 export class ShowsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(
+  async addShowWatchlist(
+    addShowWatchlistDto: AddShowWatchlistDto,
+  ): Promise<Show> {
+    try {
+      return await this.prisma.show.create({
+        data: {
+          userId: addShowWatchlistDto.userId,
+          episode: addShowWatchlistDto.episode,
+          season: addShowWatchlistDto.season,
+          showId: addShowWatchlistDto.showId,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  getShowWatchlist(userId: number): Promise<Show[]> {
+    return this.prisma.show.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  removeShowWatchlist(id: number): Promise<Show> {
+    return this.prisma.show.delete({ where: { id } });
+  }
+
+  async createShowComment(
     createShowCommentDto: CreateShowCommentDto,
   ): Promise<ShowComment> {
     let show;
@@ -28,7 +57,6 @@ export class ShowsService {
       show = await this.prisma.show.create({
         data: {
           showId: createShowCommentDto.showId,
-          watched: createShowCommentDto.watched,
           userId: createShowCommentDto.userId,
           episode: createShowCommentDto.episode,
           season: createShowCommentDto.season,
@@ -55,17 +83,22 @@ export class ShowsService {
     });
   }
 
-  findAll(showId: number): Promise<ShowComment[]> {
+  findAllShowComments(
+    userId: number,
+    showId: number,
+    season: number,
+    episode: number,
+  ): Promise<ShowComment[]> {
     return this.prisma.showComment.findMany({
       where: {
         show: {
-          id: showId,
+          AND: [{ showId }, { userId }, { episode }, { season }],
         },
       },
     });
   }
 
-  update(
+  updateShowComment(
     id: number,
     updateShowCommentDto: UpdateShowCommentDto,
   ): Promise<ShowComment> {
@@ -78,30 +111,7 @@ export class ShowsService {
     });
   }
 
-  async updateWatched(
-    updateShowWatchedDto: UpdateShowWatchedDto,
-  ): Promise<any> {
-    const show = await this.prisma.show.findFirst({
-      where: {
-        AND: [
-          { showId: updateShowWatchedDto.showId },
-          { userId: updateShowWatchedDto.userId },
-          { episode: updateShowWatchedDto.episode },
-          { season: updateShowWatchedDto.season },
-        ],
-      },
-    });
-    return this.prisma.show.update({
-      where: {
-        id: show.id,
-      },
-      data: {
-        watched: updateShowWatchedDto.watched,
-      },
-    });
-  }
-
-  remove(id: number): Promise<ShowComment> {
+  removeShowComment(id: number): Promise<ShowComment> {
     return this.prisma.showComment.delete({ where: { id } });
   }
 }
