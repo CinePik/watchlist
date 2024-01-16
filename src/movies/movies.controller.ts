@@ -76,6 +76,19 @@ export class MoviesController {
     return this.moviesService.getMovieWatchlist(+userId);
   }
 
+  @Get('recommendations/:userId')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Movie recommendations successfully found.',
+  })
+  @ApiOperation({
+    summary: 'Returns all movie recommendations',
+    description: 'Returns all movies recommendations based on user watchlist.',
+  })
+  getMovieRecommendations(@Param('userId') userId: string) {
+    return this.moviesService.getMovieRecommendations(+userId);
+  }
+
   @Post('comments')
   @Unprotected()
   @ApiOkResponse({

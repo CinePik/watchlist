@@ -1,13 +1,26 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { Show, ShowComment } from '@prisma/client';
+import { AxiosError } from 'axios';
+import { catchError, firstValueFrom } from 'rxjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddShowWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
+import { ShowRecommendationResponseDto } from './dto/response/recommendation-response.dto';
 
 @Injectable()
 export class ShowsService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(ShowsService.name);
+  constructor(
+    private prisma: PrismaService,
+    private readonly httpService: HttpService,
+  ) {}
 
   async addShowWatchlist(
     addShowWatchlistDto: AddShowWatchlistDto,
@@ -113,5 +126,42 @@ export class ShowsService {
 
   removeShowComment(id: number): Promise<ShowComment> {
     return this.prisma.showComment.delete({ where: { id } });
+  }
+
+  async getShowRecommendations(
+    userId: number,
+  ): Promise<ShowRecommendationResponseDto[]> {
+    const ids = await this.prisma.show.findMany({
+      select: {
+        showId: true,
+      },
+      where: {
+        userId,
+      },
+      distinct: ['showId'],
+    });
+
+    const { data } = await firstValueFrom(
+      this.httpService
+        .get<any>('http://localhost:3003/recommendations/shows', {
+          params: {
+            showIds: ids.map((show) => show.showId).join(','),
+          },
+        })
+        .pipe(
+          catchError((error: AxiosError) => {
+            const message = error.response.data;
+            const status = error.response.status;
+
+            this.logger.warn(
+              `Get show recommendations failed with status ${status}`,
+              message,
+            );
+            throw new HttpException(message, status);
+          }),
+        ),
+    );
+
+    return data;
   }
 }

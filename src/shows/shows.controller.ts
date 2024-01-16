@@ -82,6 +82,19 @@ export class ShowsController {
     return this.showsService.getShowWatchlist(+userId);
   }
 
+  @Get('recommendations/:userId')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Show recommendations successfully found.',
+  })
+  @ApiOperation({
+    summary: 'Returns all show recommendations',
+    description: 'Returns all show recommendations based on user watchlist.',
+  })
+  getShowRecommendations(@Param('userId') userId: string) {
+    return this.showsService.getShowRecommendations(+userId);
+  }
+
   @Post('comments')
   @Unprotected()
   @ApiOkResponse({
