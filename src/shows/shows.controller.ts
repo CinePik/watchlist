@@ -17,11 +17,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ShowComment } from '@prisma/client';
+import { Show, ShowComment } from '@prisma/client';
 import { Roles, Unprotected } from 'nest-keycloak-connect';
+import { AddShowWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
-import { UpdateShowWatchedDto } from './dto/request/update-watched.dto';
 import { ShowCommentResponseDto } from './dto/response/comment.dto';
 import { ShowsService } from './shows.service';
 
@@ -36,7 +36,48 @@ import { ShowsService } from './shows.service';
 export class ShowsController {
   constructor(private readonly showsService: ShowsService) {}
 
-  @Post()
+  @Post('watchlist')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Show added to the watchlist successfully.',
+  })
+  @ApiOperation({
+    summary: 'Add a watchlist to the watchlist',
+    description: 'Adds a show to the watchlist.',
+  })
+  addShowWatchlist(
+    @Body() createShowCommentDto: AddShowWatchlistDto,
+  ): Promise<Show> {
+    return this.showsService.addShowWatchlist(createShowCommentDto);
+  }
+
+  @Delete('watchlist/:id')
+  @ApiOkResponse({
+    description: 'Show deleted from the watchlist successfully.',
+  })
+  @ApiOperation({
+    summary: 'Deletes a show from the watchlist',
+    description: 'Deletes a show from the user watchlist.',
+  })
+  @ApiBearerAuth()
+  removeShowWatchlist(@Param('id') id: string): Promise<Show> {
+    return this.showsService.removeShowWatchlist(+id);
+  }
+
+  @Get('watchlist')
+  @Unprotected()
+  @ApiOkResponse({
+    description: 'Show watchlist successfully found.',
+  })
+  @ApiOperation({
+    summary: 'Returns all shows on the watchlist',
+    description: 'Returns all shows on the user watchlist.',
+  })
+  getMovieWatchlist(@Param('userId') userId: string) {
+    return this.showsService.getShowWatchlist(+userId);
+  }
+
+  @Post('comment')
   @Unprotected()
   @ApiOkResponse({
     description: 'Show comment successfully created.',
@@ -49,10 +90,10 @@ export class ShowsController {
   create(
     @Body() createShowCommentDto: CreateShowCommentDto,
   ): Promise<ShowComment> {
-    return this.showsService.create(createShowCommentDto);
+    return this.showsService.createShowComment(createShowCommentDto);
   }
 
-  @Get()
+  @Get('comment')
   @Unprotected()
   @ApiOkResponse({
     description: 'Show comment successfully found.',
@@ -63,10 +104,10 @@ export class ShowsController {
     description: 'Returns all shows comments for a specific show.',
   })
   findAll(@Query('showId') showId: string) {
-    return this.showsService.findAll(+showId);
+    return this.showsService.findAllShowComments(+showId);
   }
 
-  @Patch(':id')
+  @Patch('comment/:id')
   @ApiOkResponse({
     description: 'Show comment successfully updated.',
     type: [ShowCommentResponseDto],
@@ -84,30 +125,10 @@ export class ShowsController {
     @Param('id') id: string,
     @Body() updateShowDto: UpdateShowCommentDto,
   ): Promise<ShowComment> {
-    return this.showsService.update(+id, updateShowDto);
+    return this.showsService.updateShowComment(+id, updateShowDto);
   }
 
-  @Patch('watched/:id')
-  // Path id parameter is not used, but it is required by NestJS
-  @ApiOkResponse({
-    description: 'Show watched successfully updated.',
-  })
-  @ApiOperation({
-    summary: 'Updates show watched status',
-    description:
-      'Updates show watched status for a specific show. !!!Path id parameter is not used, but it is required by NestJS!!!',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'User not authorized correctly.',
-  })
-  @ApiBearerAuth()
-  updateWatched(
-    @Body() updateShowWatchedDto: UpdateShowWatchedDto,
-  ): Promise<any> {
-    return this.showsService.updateWatched(updateShowWatchedDto);
-  }
-
-  @Delete(':id')
+  @Delete('comment/:id')
   @ApiOkResponse({
     description: 'Show comment successfully deleted.',
     type: [ShowCommentResponseDto],
@@ -122,6 +143,6 @@ export class ShowsController {
   @ApiBearerAuth()
   @Roles({ roles: ['realm:app-admin'] })
   remove(@Param('id') id: string): Promise<ShowComment> {
-    return this.showsService.remove(+id);
+    return this.showsService.removeShowComment(+id);
   }
 }

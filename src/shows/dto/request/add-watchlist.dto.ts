@@ -1,13 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty } from 'class-validator';
 
-export class UpdateShowWatchedDto {
+export class AddShowWatchlistDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'User identifier.',
+    description: 'Show identifier.',
   })
   userId: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Show identifier.',
+  })
+  movieId: number;
 
   @IsInt()
   @IsNotEmpty()
@@ -29,11 +36,4 @@ export class UpdateShowWatchedDto {
     description: 'Show season.',
   })
   season: number;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Has the user watched the show.',
-  })
-  watched: boolean;
 }

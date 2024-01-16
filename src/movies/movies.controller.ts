@@ -50,10 +50,10 @@ export class MoviesController {
     return this.moviesService.addMovieWatchlist(addMovieWatchlistDto);
   }
 
-  @Delete('watchlist')
+  @Delete('watchlist/:id')
   @Unprotected()
   @ApiOkResponse({
-    description: 'Movie delete from the watchlist successfully.',
+    description: 'Movie deleted from the watchlist successfully.',
   })
   @ApiOperation({
     summary: 'Deletes a movie from the watchlist',
@@ -64,11 +64,10 @@ export class MoviesController {
     return this.moviesService.removeMovieWatchlist(+id);
   }
 
-  @Get('watchlist')
+  @Get('watchlist/:userId')
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie watchlist successfully found.',
-    type: [MovieCommentResponseDto],
   })
   @ApiOperation({
     summary: 'Returns all movies on the watchlist',
@@ -78,7 +77,7 @@ export class MoviesController {
     return this.moviesService.getMovieWatchlist(+userId);
   }
 
-  @Post('comment')
+  @Post('comments')
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie comment successfully created.',
@@ -94,7 +93,7 @@ export class MoviesController {
     return this.moviesService.createMovieComment(createMovieCommentDto);
   }
 
-  @Get('comment')
+  @Get('comments/:movieId')
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie comments successfully found.',
@@ -108,7 +107,7 @@ export class MoviesController {
     return this.moviesService.findAllMovieComments(+movieId);
   }
 
-  @Patch('comment/:id')
+  @Patch('comments/:id')
   @ApiOkResponse({
     description: 'Movie comment successfully updated.',
     type: [MovieCommentResponseDto],
@@ -126,10 +125,10 @@ export class MoviesController {
     @Param('id') id: string,
     @Body() updateMovieDto: UpdateMovieCommentDto,
   ): Promise<MovieComment> {
-    return this.moviesService.update(+id, updateMovieDto);
+    return this.moviesService.updateMovieComment(+id, updateMovieDto);
   }
 
-  @Delete('comment/:id')
+  @Delete('comments/:id')
   @ApiOkResponse({
     description: 'Movie comment successfully deleted.',
     type: [MovieCommentResponseDto],
@@ -144,6 +143,6 @@ export class MoviesController {
   @ApiBearerAuth()
   @Roles({ roles: ['realm:app-admin'] })
   remove(@Param('id') id: string): Promise<MovieComment> {
-    return this.moviesService.remove(+id);
+    return this.moviesService.removeMovieComment(+id);
   }
 }

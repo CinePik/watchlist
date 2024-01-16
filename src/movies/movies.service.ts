@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Movie, MovieComment } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddMovieWatchlistDto } from './dto/request/add-watchlist.dto';
@@ -12,12 +12,16 @@ export class MoviesService {
   async addMovieWatchlist(
     addMovieWatchlistDto: AddMovieWatchlistDto,
   ): Promise<Movie> {
-    return await this.prisma.movie.create({
-      data: {
-        id: addMovieWatchlistDto.movieId,
-        userId: addMovieWatchlistDto.userId,
-      },
-    });
+    try {
+      return await this.prisma.movie.create({
+        data: {
+          id: addMovieWatchlistDto.movieId,
+          userId: addMovieWatchlistDto.userId,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   getMovieWatchlist(userId: number): Promise<Movie[]> {
@@ -71,7 +75,7 @@ export class MoviesService {
     });
   }
 
-  update(
+  updateMovieComment(
     id: number,
     updateMovieCommentDto: UpdateMovieCommentDto,
   ): Promise<MovieComment> {
@@ -81,7 +85,7 @@ export class MoviesService {
     });
   }
 
-  remove(id: number): Promise<MovieComment> {
+  removeMovieComment(id: number): Promise<MovieComment> {
     return this.prisma.movieComment.delete({ where: { id } });
   }
 }
