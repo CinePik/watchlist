@@ -15,6 +15,12 @@
 
 Node.js microservice for user watchlist.
 
+## Documentation
+
+OpenAPI documentation available at [http://localhost:3002/api](http://localhost:3002/api).  
+For accessing secured endpoints add your `access_token` provided to you at login to the `Authorization` header.
+
+
 ## Installation
 
 ```bash
@@ -118,7 +124,7 @@ kubectl create configmap keycloak-config --from-literal=KEYCLOAK_BASE_URL="http:
 Create secret for keycloak
 
 ```bash
-kubectl create secret generic keycloak-config --from-literal=KEYCLOAK_ADMIN="admin" --from-literal=KEYCLOAK_ADMIN_PASSWORD="<REPLACE_ME>" --from-literal=KEYCLOAK_CLIENT_SECRET="<REPLACE_ME>" --from-literal=KEYCLOAK_REALM_RSA_PUBLIC_KEY="<REPLACE_ME>"
+kubectl create secret generic keycloak-credentials --from-literal=KEYCLOAK_ADMIN="admin" --from-literal=KEYCLOAK_ADMIN_PASSWORD="<REPLACE_ME>" --from-literal=KEYCLOAK_CLIENT_SECRET="<REPLACE_ME>" --from-literal=KEYCLOAK_REALM_RSA_PUBLIC_KEY="<REPLACE_ME>"
 ```
 
 Create a Secret for the database url environment variable in the deployment file.

@@ -11,52 +11,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model WatchedMovie {
-  id               Int      @id @default(autoincrement())
+model Movie {
+  id               Int      @id
   userId           Int
-  movieId          Int
+  movieComments    MovieComment[]
+  watched          Boolean @default(false) 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  comments         Comment[]
-   @@unique([userId, movieId])
+ 
+  @@unique([userId, id])
 }
 
-model SavedMovie {
+model Show {
+  id               Int    @id @default(autoincrement())
+  showId           Int
   userId           Int
-  movieId          Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  @@id([userId, movieId])
-}
-
-model WatchedSeries {
-  id               Int      @id @default(autoincrement())
-  userId           Int
-  seriesId         Int
   season           Int
   episode          Int
+  showComments     ShowComment[]
+  watched          Boolean @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  comments         Comment[]
-  @@unique([userId, seriesId, season, episode])
+  @@unique([userId, showId, season, episode])
 }
 
-model SavedSeries {
-  userId           Int
-  seriesId         Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  @@id([userId, seriesId])
-}
-
-model Comment {
+model MovieComment {
   id               Int      @id @default(autoincrement())
-  watchedMovieId   Int?
-  watchedSeriesId  Int?
-  authorId         Int
-  Comment          String
-  watchedMovie     WatchedMovie? @relation(fields: [watchedMovieId], references: [id])
-  watchedSeries    WatchedSeries? @relation(fields: [watchedSeriesId], references: [id])
+  movieId          Int
+  comment          String
+  rating           Float?
+  movie            Movie    @relation(fields: [movieId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+
+model ShowComment {
+  id               Int      @id @default(autoincrement())
+  showId  	       Int
+  comment          String
+  rating           Float?
+  show             Show    @relation(fields: [showId], references: [id])
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

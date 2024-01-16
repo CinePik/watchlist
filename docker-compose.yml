@@ -5,26 +5,12 @@ services:
     container_name: cinepik-watchlist
     build: .
     ports:
-      - ${PORT:-3001}:${PORT:-3001}
+      - ${NODE_PORT}:${NODE_PORT}
     depends_on:
       - db
     volumes:
       - .:/app
       - /app/node_modules
-    env_file:
-      - .env
-    networks:
-      - cinepik-network
-
-  seed:
-    container_name: cinepik-watchlist-seed
-    build: .
-    command: npm run prisma:seed
-    depends_on:
-      - db
-    volumes:
-      - .:/app
-      - node_modules:/app/node_modules
     env_file:
       - .env
     networks:
