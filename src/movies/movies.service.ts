@@ -5,6 +5,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Movie, MovieComment } from '@prisma/client';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -17,10 +18,16 @@ import { MovieRecommendationResponseDto } from './dto/response/recommendation-re
 @Injectable()
 export class MoviesService {
   private readonly logger = new Logger(MoviesService.name);
+  private recommendationsUrl: string;
   constructor(
     private prisma: PrismaService,
     private readonly httpService: HttpService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.recommendationsUrl = this.configService.get(
+      'RECOMMENDATION_SERVICE_URL',
+    );
+  }
 
   async addMovieWatchlist(
     addMovieWatchlistDto: AddMovieWatchlistDto,
@@ -116,7 +123,7 @@ export class MoviesService {
 
     const { data } = await firstValueFrom(
       this.httpService
-        .get<any>('http://localhost:3003/recommendations/movies', {
+        .get<any>(`${this.recommendationsUrl}/recommendations/movies`, {
           params: {
             movieIds: ids.map((movie) => movie.id).join(','),
           },

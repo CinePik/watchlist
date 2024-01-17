@@ -5,6 +5,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Show, ShowComment } from '@prisma/client';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -17,10 +18,16 @@ import { ShowRecommendationResponseDto } from './dto/response/recommendation-res
 @Injectable()
 export class ShowsService {
   private readonly logger = new Logger(ShowsService.name);
+  private recommendationsUrl: string;
   constructor(
     private prisma: PrismaService,
     private readonly httpService: HttpService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.recommendationsUrl = this.configService.get(
+      'RECOMMENDATION_SERVICE_URL',
+    );
+  }
 
   async addShowWatchlist(
     addShowWatchlistDto: AddShowWatchlistDto,
@@ -143,7 +150,7 @@ export class ShowsService {
 
     const { data } = await firstValueFrom(
       this.httpService
-        .get<any>('http://localhost:3003/recommendations/shows', {
+        .get<any>(`${this.recommendationsUrl}/recommendations/shows`, {
           params: {
             showIds: ids.map((show) => show.showId).join(','),
           },
