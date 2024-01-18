@@ -40,8 +40,7 @@ export class HealthController {
     return this.health.check([
       () => this.http.pingCheck('google', 'https://google.com'),
       () => this.prisma.pingCheck('prisma', this.prismaService),
-      () =>
-        this.http.pingCheck('rapidapi', 'https://movies-api14.p.rapidapi.com'),
+      () => this.http.pingCheck('rapidapi', 'https://rapidapi.com', {}),
       () => this.http.pingCheck('rapidapi', 'http://cinepik-keycloak'),
       () =>
         this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.9 }), // if more than 90% of disk space is used
