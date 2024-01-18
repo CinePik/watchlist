@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -17,11 +16,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Movie, MovieComment } from '@prisma/client';
-import { Roles, Unprotected } from 'nest-keycloak-connect';
+import { Unprotected } from 'nest-keycloak-connect';
 import { AddMovieWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateMovieCommentDto } from './dto/request/create-comment.dto';
 import { UpdateMovieCommentDto } from './dto/request/update-comment.dto';
 import { MovieCommentResponseDto } from './dto/response/comment.dto';
+import { MovieDetailWrapperResponseDto } from './dto/response/movie-detail-wrapper-response.dto';
 import { MoviesService } from './movies.service';
 
 @Controller('movies')
@@ -67,6 +67,7 @@ export class MoviesController {
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie watchlist successfully found.',
+    type: [MovieDetailWrapperResponseDto],
   })
   @ApiOperation({
     summary: 'Returns all movies on the watchlist',
@@ -120,6 +121,7 @@ export class MoviesController {
   }
 
   @Patch('comments/:id')
+  @Unprotected()
   @ApiOkResponse({
     description: 'Movie comment successfully updated.',
     type: [MovieCommentResponseDto],
@@ -131,8 +133,6 @@ export class MoviesController {
   @ApiUnauthorizedResponse({
     description: 'User not authorized correctly.',
   })
-  @Roles({ roles: ['realm:app-admin'] })
-  @ApiBearerAuth()
   update(
     @Param('id') id: string,
     @Body() updateMovieDto: UpdateMovieCommentDto,
@@ -141,6 +141,7 @@ export class MoviesController {
   }
 
   @Delete('comments/:id')
+  @Unprotected()
   @ApiOkResponse({
     description: 'Movie comment successfully deleted.',
     type: [MovieCommentResponseDto],
@@ -152,8 +153,6 @@ export class MoviesController {
   @ApiUnauthorizedResponse({
     description: 'User not authorized correctly.',
   })
-  @ApiBearerAuth()
-  @Roles({ roles: ['realm:app-admin'] })
   remove(@Param('id') id: string): Promise<MovieComment> {
     return this.moviesService.removeMovieComment(+id);
   }

@@ -20,7 +20,6 @@ Node.js microservice for user watchlist.
 OpenAPI documentation available at [http://localhost:3002/api](http://localhost:3002/api).  
 For accessing secured endpoints add your `access_token` provided to you at login to the `Authorization` header.
 
-
 ## Installation
 
 ```bash
@@ -132,6 +131,13 @@ Replace the value in the <> with the appropriate value.
 
 ```bash
 kubectl create secret generic database-credentials --from-literal=DATABASE_URL=<db_url>
+```
+
+Create a Secret for the movies API environment variable in the deployment file.
+Replace the value in the <> with the appropriate value. More info [here](https://rapidapi.com/elisbushaj2/api/movies-api14).
+
+```bash
+kubectl create secret generic catalog-credentials --from-literal=MOVIES_RAPID_API_KEY=<REPLACE_ME>
 ```
 
 ### Apply changes

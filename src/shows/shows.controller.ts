@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -19,7 +18,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Show, ShowComment } from '@prisma/client';
-import { Roles, Unprotected } from 'nest-keycloak-connect';
+import { Unprotected } from 'nest-keycloak-connect';
 import { AddShowWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
@@ -147,8 +146,7 @@ export class ShowsController {
   @ApiUnauthorizedResponse({
     description: 'User not authorized correctly.',
   })
-  @Roles({ roles: ['realm:app-admin'] })
-  @ApiBearerAuth()
+  @Unprotected()
   update(
     @Param('id') id: string,
     @Body() updateShowDto: UpdateShowCommentDto,
@@ -168,8 +166,7 @@ export class ShowsController {
   @ApiUnauthorizedResponse({
     description: 'User not authorized correctly.',
   })
-  @ApiBearerAuth()
-  @Roles({ roles: ['realm:app-admin'] })
+  @Unprotected()
   remove(@Param('id') id: string): Promise<ShowComment> {
     return this.showsService.removeShowComment(+id);
   }
