@@ -1,5 +1,4 @@
 import { Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import {
   DiskHealthIndicator,
@@ -25,7 +24,6 @@ export class HealthController {
     private manualHealthIndicator: ManualHealthIndicator,
     private prisma: PrismaHealthIndicator,
     private prismaService: PrismaService,
-    private readonly configService: ConfigService,
   ) {}
 
   @Get('live')
@@ -43,11 +41,6 @@ export class HealthController {
       () => this.http.pingCheck('google', 'https://google.com'),
       () => this.prisma.pingCheck('prisma', this.prismaService),
       () => this.http.pingCheck('rapidapi', 'https://rapidapi.com', {}),
-      () =>
-        this.http.pingCheck(
-          'keycloak',
-          `${this.configService.get('KEYCLOAK_BASE_URL')}/health`,
-        ),
       () =>
         this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.9 }), // if more than 90% of disk space is used
       () => this.memory.checkHeap('memory_heap', 256 * 1024 * 1024), // if more than 256MiB
