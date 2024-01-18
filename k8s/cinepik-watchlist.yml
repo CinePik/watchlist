@@ -14,6 +14,13 @@ spec:
     spec:
       containers:
         - image: sebam/cinepik-watchlist:latest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 150m
+              memory: 256Mi
           name: cinepik-watchlist
           env:
             - name: NODE_PORT
