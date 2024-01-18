@@ -13,7 +13,7 @@ export class MovieCommentResponseDto {
   userId: string;
 
   @ApiProperty({
-    description: 'Movie identifier.',
+    description: 'Cinepik movie identifier.',
   })
   movieId: number;
 

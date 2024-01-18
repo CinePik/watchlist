@@ -40,7 +40,7 @@ export class MoviesService {
     try {
       return await this.prisma.movie.create({
         data: {
-          id: addMovieWatchlistDto.movieId,
+          tmdbMovieId: addMovieWatchlistDto.tmdbMovieId,
           userId: addMovieWatchlistDto.userId,
         },
       });
@@ -52,9 +52,10 @@ export class MoviesService {
   async getMovieWatchlist(
     userId: string,
   ): Promise<MovieDetailWrapperResponseDto[]> {
-    const ids = await this.prisma.movie.findMany({
+    const watchlistMovies = await this.prisma.movie.findMany({
       select: {
         id: true,
+        tmdbMovieId: true,
       },
       where: {
         userId,
@@ -63,11 +64,11 @@ export class MoviesService {
 
     const movies: Array<MovieDetailWrapperResponseDto> = [];
 
-    for (const id in ids) {
+    for (const watchlistMovie of watchlistMovies) {
       try {
         const { data } = await firstValueFrom(
           this.httpService.get<any>(
-            `https://movies-api14.p.rapidapi.com/movie/${id}`,
+            `https://movies-api14.p.rapidapi.com/movie/${watchlistMovie.tmdbMovieId}`,
             {
               headers: {
                 'X-RapidAPI-Key': this.apiKey,
@@ -79,7 +80,8 @@ export class MoviesService {
 
         const dataMovie = data.movie;
         const movie: MovieDetailResponseDto = {
-          id: dataMovie._id,
+          id: watchlistMovie.id,
+          tmdbId: dataMovie._id,
           title: dataMovie.title,
           backdrop_path: dataMovie.backdrop_path,
           genres: dataMovie.genres,
@@ -124,26 +126,26 @@ export class MoviesService {
   async createMovieComment(
     createMovieCommentDto: CreateMovieCommentDto,
   ): Promise<MovieComment> {
-    if (
-      (await this.prisma.movie.count({
-        where: {
-          AND: [
-            { id: createMovieCommentDto.movieId },
-            { userId: createMovieCommentDto.userId },
-          ],
-        },
-      })) === 0
-    ) {
+    const movie = await this.prisma.movie.findFirst({
+      where: {
+        AND: [
+          { tmdbMovieId: createMovieCommentDto.tmdbMovieId },
+          { userId: createMovieCommentDto.userId },
+        ],
+      },
+    });
+
+    if (movie === null) {
       await this.prisma.movie.create({
         data: {
-          id: createMovieCommentDto.movieId,
+          tmdbMovieId: createMovieCommentDto.tmdbMovieId,
           userId: createMovieCommentDto.userId,
         },
       });
     }
     return this.prisma.movieComment.create({
       data: {
-        movieId: createMovieCommentDto.movieId,
+        movieId: movie.id,
         comment: createMovieCommentDto.comment,
         rating: createMovieCommentDto.rating,
       },
@@ -154,7 +156,7 @@ export class MoviesService {
     return this.prisma.movieComment.findMany({
       where: {
         movie: {
-          id: movieId,
+          tmdbMovieId: movieId,
         },
       },
     });
@@ -179,7 +181,7 @@ export class MoviesService {
   ): Promise<MovieRecommendationResponseDto[]> {
     const ids = await this.prisma.movie.findMany({
       select: {
-        id: true,
+        tmdbMovieId: true,
       },
       where: {
         userId,
@@ -190,7 +192,7 @@ export class MoviesService {
       this.httpService
         .get<any>(`${this.recommendationsUrl}/recommendations/movies`, {
           params: {
-            movieIds: ids.map((movie) => movie.id).join(','),
+            movieIds: ids.map((movie) => movie.tmdbMovieId).join(','),
           },
         })
         .pipe(

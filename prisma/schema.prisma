@@ -12,25 +12,26 @@ datasource db {
 }
 
 model Movie {
-  id               Int      @id
+  id               Int      @id @default(autoincrement())
+  tmdbMovieId      Int
   userId           String
   movieComments    MovieComment[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
  
-  @@unique([userId, id])
+  @@unique([userId, tmdbMovieId])
 }
 
 model Show {
   id               Int    @id @default(autoincrement())
-  showId           Int
+  tmdbShowId       Int
   userId           String
   season           Int
   episode          Int
   showComments     ShowComment[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  @@unique([userId, showId, season, episode])
+  @@unique([userId, tmdbShowId, season, episode])
 }
 
 model MovieComment {

@@ -108,7 +108,7 @@ export class MoviesController {
     return this.moviesService.createMovieComment(createMovieCommentDto);
   }
 
-  @Get('comments/:movieId')
+  @Get('comments/:tmdbMovieId')
   @Unprotected()
   @ApiOkResponse({
     description: 'Movie comments successfully found.',
@@ -118,7 +118,7 @@ export class MoviesController {
     summary: 'Returns all movie comments',
     description: 'Returns all movies comments for a specific movie.',
   })
-  findAllMovieComments(@Param('movieId') movieId: string) {
+  findAllMovieComments(@Param('tmdbMovieId') movieId: string) {
     return this.moviesService.findAllMovieComments(+movieId);
   }
 

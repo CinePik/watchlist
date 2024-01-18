@@ -11,7 +11,7 @@ export class AddMovieWatchlistDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Movie identifier.',
+    description: 'TMDB movie identifier.',
   })
-  movieId: number;
+  tmdbMovieId: number;
 }

@@ -3,9 +3,13 @@ import { SourceResponseDto } from './source-response.dto';
 
 export class MovieDetailResponseDto {
   @ApiProperty({
-    description: 'Movie identifier.',
+    description: 'Cinepik movie identifier.',
   })
   id: number;
+  @ApiProperty({
+    description: 'TMDB movie identifier.',
+  })
+  tmdbId: number;
   @ApiProperty({
     description: 'Url for the backdrop image.',
   })

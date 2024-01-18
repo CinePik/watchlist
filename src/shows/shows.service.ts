@@ -44,7 +44,7 @@ export class ShowsService {
           userId: addShowWatchlistDto.userId,
           episode: addShowWatchlistDto.episode,
           season: addShowWatchlistDto.season,
-          showId: addShowWatchlistDto.showId,
+          tmdbShowId: addShowWatchlistDto.showId,
         },
       });
     } catch (error) {
@@ -57,7 +57,8 @@ export class ShowsService {
   ): Promise<ShowDetailWrapperResponseDto[]> {
     const watchlistShows = await this.prisma.show.findMany({
       select: {
-        showId: true,
+        id: true,
+        tmdbShowId: true,
         episode: true,
         season: true,
       },
@@ -72,7 +73,7 @@ export class ShowsService {
       try {
         const { data } = await firstValueFrom(
           this.httpService.get<any>(
-            `https://movies-api14.p.rapidapi.com/show/${watchlistShow.showId}`,
+            `https://movies-api14.p.rapidapi.com/show/${watchlistShow.tmdbShowId}`,
             {
               headers: {
                 'X-RapidAPI-Key': this.apiKey,
@@ -84,7 +85,8 @@ export class ShowsService {
 
         const dataShow = data.show;
         const show: ShowDetailResponseDto = {
-          id: dataShow._id,
+          id: watchlistShow.id,
+          tmdbId: dataShow._id,
           title: dataShow.title,
           backdrop_path: dataShow.backdrop_path,
           genres: dataShow.genres,
@@ -149,7 +151,7 @@ export class ShowsService {
       (await this.prisma.show.count({
         where: {
           AND: [
-            { showId: createShowCommentDto.showId },
+            { tmdbShowId: createShowCommentDto.showId },
             { userId: createShowCommentDto.userId },
             { episode: createShowCommentDto.episode },
             { season: createShowCommentDto.season },
@@ -159,7 +161,7 @@ export class ShowsService {
     ) {
       show = await this.prisma.show.create({
         data: {
-          showId: createShowCommentDto.showId,
+          tmdbShowId: createShowCommentDto.showId,
           userId: createShowCommentDto.userId,
           episode: createShowCommentDto.episode,
           season: createShowCommentDto.season,
@@ -169,7 +171,7 @@ export class ShowsService {
       show = await this.prisma.show.findFirst({
         where: {
           AND: [
-            { showId: createShowCommentDto.showId },
+            { tmdbShowId: createShowCommentDto.showId },
             { userId: createShowCommentDto.userId },
             { episode: createShowCommentDto.episode },
             { season: createShowCommentDto.season },
@@ -195,7 +197,7 @@ export class ShowsService {
     return this.prisma.showComment.findMany({
       where: {
         show: {
-          AND: [{ showId }, { userId }, { episode }, { season }],
+          AND: [{ tmdbShowId: showId }, { userId }, { episode }, { season }],
         },
       },
     });
@@ -223,19 +225,19 @@ export class ShowsService {
   ): Promise<ShowRecommendationResponseDto[]> {
     const ids = await this.prisma.show.findMany({
       select: {
-        showId: true,
+        tmdbShowId: true,
       },
       where: {
         userId,
       },
-      distinct: ['showId'],
+      distinct: ['tmdbShowId'],
     });
 
     const { data } = await firstValueFrom(
       this.httpService
         .get<any>(`${this.recommendationsUrl}/recommendations/shows`, {
           params: {
-            showIds: ids.map((show) => show.showId).join(','),
+            showIds: ids.map((show) => show.tmdbShowId).join(','),
           },
         })
         .pipe(

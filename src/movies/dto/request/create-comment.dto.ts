@@ -11,9 +11,9 @@ export class CreateMovieCommentDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Movie identifier.',
+    description: 'TMDB Movie identifier.',
   })
-  movieId: number;
+  tmdbMovieId: number;
 
   @IsNumber()
   @Min(0)
