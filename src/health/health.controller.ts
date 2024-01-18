@@ -41,7 +41,7 @@ export class HealthController {
   checkReadiness() {
     return this.health.check([
       () => this.http.pingCheck('google', 'https://google.com'),
-      // () => this.prisma.pingCheck('prisma', this.prismaService),
+      () => this.prisma.pingCheck('prisma', this.prismaService),
       // () => this.http.pingCheck('rapidapi', 'https://rapidapi.com', {}),
       // () =>
       //   this.http.pingCheck(
