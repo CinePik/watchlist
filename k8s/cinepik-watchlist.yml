@@ -44,7 +44,7 @@ spec:
                   name: database-credentials
                   key: DATABASE_URL
             - name: RECOMMENDATION_SERVICE_URL
-              value: 'http://cinepik-recommendation:3003'
+              value: 'http://cinepik-recommendation-engine:3003'
             - name: MOVIES_RAPID_API_KEY
               valueFrom:
                 secretKeyRef:
