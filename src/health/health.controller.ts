@@ -41,7 +41,8 @@ export class HealthController {
       () => this.http.pingCheck('google', 'https://google.com'),
       () => this.prisma.pingCheck('prisma', this.prismaService),
       () => this.http.pingCheck('rapidapi', 'https://rapidapi.com', {}),
-      () => this.http.pingCheck('keycloak', 'http://cinepik-keycloak/health'),
+      () =>
+        this.http.pingCheck('keycloak', 'http://cinepik-keycloak:8080/health'),
       () =>
         this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.9 }), // if more than 90% of disk space is used
       () => this.memory.checkHeap('memory_heap', 256 * 1024 * 1024), // if more than 256MiB
