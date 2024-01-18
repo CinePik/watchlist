@@ -23,6 +23,7 @@ import { AddShowWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
 import { ShowCommentResponseDto } from './dto/response/comment.dto';
+import { ShowDetailWrapperResponseDto } from './dto/response/show-detail-wrapper-response.dto';
 import { ShowsService } from './shows.service';
 
 @Controller('shows')
@@ -72,12 +73,15 @@ export class ShowsController {
   @Unprotected()
   @ApiOkResponse({
     description: 'Show watchlist successfully found.',
+    type: [ShowDetailWrapperResponseDto],
   })
   @ApiOperation({
     summary: 'Returns all shows on the watchlist',
     description: 'Returns all shows on the user watchlist.',
   })
-  getMovieWatchlist(@Param('userId') userId: string) {
+  getMovieWatchlist(
+    @Param('userId') userId: string,
+  ): Promise<ShowDetailWrapperResponseDto[]> {
     return this.showsService.getShowWatchlist(+userId);
   }
 

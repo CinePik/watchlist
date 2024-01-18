@@ -10,15 +10,20 @@ import { Show, ShowComment } from '@prisma/client';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ShowEpisodeResponseDto } from 'src/shows/dto/response/show-episode-response.dto';
+import { ShowSeasonsResponseDto } from 'src/shows/dto/response/show-season-response.dto';
 import { AddShowWatchlistDto } from './dto/request/add-watchlist.dto';
 import { CreateShowCommentDto } from './dto/request/create-comment.dto';
 import { UpdateShowCommentDto } from './dto/request/update-comment.dto';
 import { ShowRecommendationResponseDto } from './dto/response/recommendation-response.dto';
+import { ShowDetailResponseDto } from './dto/response/show-detail-response.dto';
+import { ShowDetailWrapperResponseDto } from './dto/response/show-detail-wrapper-response.dto';
 
 @Injectable()
 export class ShowsService {
   private readonly logger = new Logger(ShowsService.name);
   private recommendationsUrl: string;
+  private apiKey;
   constructor(
     private prisma: PrismaService,
     private readonly httpService: HttpService,
@@ -27,6 +32,7 @@ export class ShowsService {
     this.recommendationsUrl = this.configService.get(
       'RECOMMENDATION_SERVICE_URL',
     );
+    this.apiKey = this.configService.get('MOVIES_RAPID_API_KEY');
   }
 
   async addShowWatchlist(
@@ -46,12 +52,89 @@ export class ShowsService {
     }
   }
 
-  getShowWatchlist(userId: number): Promise<Show[]> {
-    return this.prisma.show.findMany({
+  async getShowWatchlist(
+    userId: number,
+  ): Promise<ShowDetailWrapperResponseDto[]> {
+    const watchlistShows = await this.prisma.show.findMany({
+      select: {
+        showId: true,
+        episode: true,
+        season: true,
+      },
       where: {
         userId,
       },
     });
+
+    const shows: Array<ShowDetailWrapperResponseDto> = [];
+
+    for (const watchlistShow of watchlistShows) {
+      try {
+        const { data } = await firstValueFrom(
+          this.httpService.get<any>(
+            `https://movies-api14.p.rapidapi.com/show/${watchlistShow.showId}`,
+            {
+              headers: {
+                'X-RapidAPI-Key': this.apiKey,
+                'X-RapidAPI-Host': 'movies-api14.p.rapidapi.com',
+              },
+            },
+          ),
+        );
+
+        const dataShow = data.show;
+        const show: ShowDetailResponseDto = {
+          id: dataShow._id,
+          title: dataShow.title,
+          backdrop_path: dataShow.backdrop_path,
+          genres: dataShow.genres,
+          original_title: dataShow.original_title,
+          overview: dataShow.overview,
+          poster_path: dataShow.poster_path,
+          first_aired: dataShow.first_aired,
+          vote_average: dataShow.vote_average,
+          vote_count: dataShow.vote_count,
+          youtube_trailer: dataShow.youtube_trailer,
+          sources: dataShow.sources,
+        };
+
+        const seasons: Array<ShowSeasonsResponseDto> = [];
+
+        for (const season of data.seasons) {
+          const dataEpisodes = season.episodes;
+          const episodes: Array<ShowEpisodeResponseDto> = [];
+          for (const episode of dataEpisodes) {
+            episodes.push({
+              id: episode._id,
+              episode_number: episode.episode_number,
+              first_aired: episode.first_aired,
+              season_number: episode.season_number,
+              show_id: episode.show_id,
+              sources: episode.sources,
+              thumbnail_path: episode.thumbnail_path,
+              title: episode.title,
+              availability: episode.availability,
+            });
+          }
+          seasons.push({
+            season: season.season,
+            episodes: episodes,
+          });
+        }
+
+        const showWrapper: ShowDetailWrapperResponseDto =
+          new ShowDetailWrapperResponseDto();
+        showWrapper.show = show;
+        showWrapper.seasons = seasons;
+        showWrapper.episode = watchlistShow.episode;
+        showWrapper.season = watchlistShow.season;
+        shows.push(showWrapper);
+      } catch (error) {
+        this.logger.warn(`Get show failed with error`, error);
+      }
+
+      return shows;
+    }
   }
 
   removeShowWatchlist(id: number): Promise<Show> {

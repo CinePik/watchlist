@@ -73,7 +73,9 @@ export class MoviesController {
     summary: 'Returns all movies on the watchlist',
     description: 'Returns all movies on the user watchlist.',
   })
-  getMovieWatchlist(@Param('userId') userId: string) {
+  getMovieWatchlist(
+    @Param('userId') userId: string,
+  ): Promise<MovieDetailWrapperResponseDto[]> {
     return this.moviesService.getMovieWatchlist(+userId);
   }
 
