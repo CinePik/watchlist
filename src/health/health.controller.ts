@@ -42,7 +42,7 @@ export class HealthController {
     return this.health.check([
       () => this.http.pingCheck('google', 'https://google.com'),
       () => this.prisma.pingCheck('prisma', this.prismaService),
-      // () => this.http.pingCheck('rapidapi', 'https://rapidapi.com', {}),
+      () => this.http.pingCheck('rapidapi', 'https://rapidapi.com/hub'),
       // () =>
       //   this.http.pingCheck(
       //     'keycloak',
