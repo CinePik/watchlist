@@ -9,6 +9,7 @@
         "dockerhub",
         "keycloak",
         "nestjs",
+        "rapidapi",
         "tmdb",
         "Watchlist"
     ],
