@@ -15,13 +15,6 @@ spec:
       containers:
         - image: sebam/cinepik-watchlist:latest
           name: cinepik-watchlist
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 250m
-              memory: 256Mi
           env:
             - name: NODE_PORT
               value: '3002'
@@ -50,6 +43,8 @@ spec:
                 secretKeyRef:
                   name: database-credentials
                   key: DATABASE_URL
+            - name: RECOMMENDATION_SERVICE_URL
+              value: 'http://cinepik-recommendation:3003'
           ports:
             - containerPort: 3002
               name: server
