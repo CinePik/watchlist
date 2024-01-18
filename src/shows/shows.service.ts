@@ -53,7 +53,7 @@ export class ShowsService {
   }
 
   async getShowWatchlist(
-    userId: number,
+    userId: string,
   ): Promise<ShowDetailWrapperResponseDto[]> {
     const watchlistShows = await this.prisma.show.findMany({
       select: {
@@ -132,9 +132,9 @@ export class ShowsService {
       } catch (error) {
         this.logger.warn(`Get show failed with error`, error);
       }
-
-      return shows;
     }
+
+    return shows;
   }
 
   removeShowWatchlist(id: number): Promise<Show> {
@@ -187,7 +187,7 @@ export class ShowsService {
   }
 
   findAllShowComments(
-    userId: number,
+    userId: string,
     showId: number,
     season: number,
     episode: number,
@@ -219,7 +219,7 @@ export class ShowsService {
   }
 
   async getShowRecommendations(
-    userId: number,
+    userId: string,
   ): Promise<ShowRecommendationResponseDto[]> {
     const ids = await this.prisma.show.findMany({
       select: {

@@ -2,12 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class AddShowWatchlistDto {
-  @IsInt()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Show identifier.',
   })
-  userId: number;
+  userId: string;
 
   @IsInt()
   @IsNotEmpty()

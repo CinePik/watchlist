@@ -2,12 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class AddMovieWatchlistDto {
-  @IsInt()
   @IsNotEmpty()
   @ApiProperty({
     description: 'User identifier.',
   })
-  userId: number;
+  userId: string;
 
   @IsInt()
   @IsNotEmpty()

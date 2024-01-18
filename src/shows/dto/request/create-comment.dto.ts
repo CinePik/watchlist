@@ -2,12 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
 
 export class CreateShowCommentDto {
-  @IsInt()
   @IsNotEmpty()
   @ApiProperty({
     description: 'User identifier.',
   })
-  userId: number;
+  userId: string;
 
   @IsInt()
   @IsNotEmpty()

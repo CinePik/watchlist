@@ -9,7 +9,7 @@ export class ShowCommentResponseDto {
   @ApiProperty({
     description: 'User identifier.',
   })
-  userId: number;
+  userId: string;
 
   @ApiProperty({
     description: 'Show identifier.',

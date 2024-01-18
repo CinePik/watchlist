@@ -76,7 +76,7 @@ export class MoviesController {
   getMovieWatchlist(
     @Param('userId') userId: string,
   ): Promise<MovieDetailWrapperResponseDto[]> {
-    return this.moviesService.getMovieWatchlist(+userId);
+    return this.moviesService.getMovieWatchlist(userId);
   }
 
   @Get('recommendations/:userId')
@@ -89,7 +89,7 @@ export class MoviesController {
     description: 'Returns all movies recommendations based on user watchlist.',
   })
   getMovieRecommendations(@Param('userId') userId: string) {
-    return this.moviesService.getMovieRecommendations(+userId);
+    return this.moviesService.getMovieRecommendations(userId);
   }
 
   @Post('comments')

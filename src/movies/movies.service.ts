@@ -50,7 +50,7 @@ export class MoviesService {
   }
 
   async getMovieWatchlist(
-    userId: number,
+    userId: string,
   ): Promise<MovieDetailWrapperResponseDto[]> {
     const ids = await this.prisma.movie.findMany({
       select: {
@@ -175,7 +175,7 @@ export class MoviesService {
   }
 
   async getMovieRecommendations(
-    userId: number,
+    userId: string,
   ): Promise<MovieRecommendationResponseDto[]> {
     const ids = await this.prisma.movie.findMany({
       select: {

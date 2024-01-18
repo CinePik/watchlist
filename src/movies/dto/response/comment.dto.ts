@@ -10,7 +10,7 @@ export class MovieCommentResponseDto {
   @ApiProperty({
     description: 'User identifier.',
   })
-  userId: number;
+  userId: string;
 
   @ApiProperty({
     description: 'Movie identifier.',

@@ -79,10 +79,10 @@ export class ShowsController {
     summary: 'Returns all shows on the watchlist',
     description: 'Returns all shows on the user watchlist.',
   })
-  getMovieWatchlist(
+  getShowWatchlist(
     @Param('userId') userId: string,
   ): Promise<ShowDetailWrapperResponseDto[]> {
-    return this.showsService.getShowWatchlist(+userId);
+    return this.showsService.getShowWatchlist(userId);
   }
 
   @Get('recommendations/:userId')
@@ -95,7 +95,7 @@ export class ShowsController {
     description: 'Returns all show recommendations based on user watchlist.',
   })
   getShowRecommendations(@Param('userId') userId: string) {
-    return this.showsService.getShowRecommendations(+userId);
+    return this.showsService.getShowRecommendations(userId);
   }
 
   @Post('comments')
@@ -131,7 +131,7 @@ export class ShowsController {
     @Query('episode') episode: string,
   ) {
     return this.showsService.findAllShowComments(
-      +userId,
+      userId,
       +showId,
       +season,
       +episode,
