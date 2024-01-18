@@ -1,9 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Unprotected } from 'nest-keycloak-connect';
 import { MetricsService } from './metrics.service';
 
 @Controller('metrics')
+@ApiTags('metrics')
 @Unprotected()
 export class MetricsController {
   constructor(private metricsService: MetricsService) {}
