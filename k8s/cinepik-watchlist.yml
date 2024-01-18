@@ -45,6 +45,11 @@ spec:
                   key: DATABASE_URL
             - name: RECOMMENDATION_SERVICE_URL
               value: 'http://cinepik-recommendation:3003'
+            - name: MOVIES_RAPID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: watchlist-credentials
+                  key: MOVIES_RAPID_API_KEY
           ports:
             - containerPort: 3002
               name: server

@@ -137,7 +137,7 @@ Create a Secret for the movies API environment variable in the deployment file.
 Replace the value in the <> with the appropriate value. More info [here](https://rapidapi.com/elisbushaj2/api/movies-api14).
 
 ```bash
-kubectl create secret generic catalog-credentials --from-literal=MOVIES_RAPID_API_KEY=<REPLACE_ME>
+kubectl create secret generic watchlist-credentials --from-literal=MOVIES_RAPID_API_KEY=<REPLACE_ME>
 ```
 
 ### Apply changes
