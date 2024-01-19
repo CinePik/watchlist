@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './health/health.module';
+import { HttpLoggerMiddleware } from './http-logger/http-logger.middleware';
 import { KeycloakModule } from './keycloak/keycloak.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { MoviesModule } from './movies/movies.module';
@@ -23,4 +24,8 @@ import { ShowsModule } from './shows/shows.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpLoggerMiddleware).forRoutes('*');
+  }
+}
