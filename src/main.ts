@@ -23,8 +23,6 @@ async function bootstrap() {
 
   SwaggerModule.setup('openapi', app, document);
 
-  // app.enableCors({ origin: `http://localhost:${port}` });
-
   // Enable DTO validation
   app.useGlobalPipes(new ValidationPipe());
 
