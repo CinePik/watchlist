@@ -13,10 +13,17 @@ async function bootstrap() {
     .setTitle('CinePik Watchlist API')
     .setDescription('The CinePik Watchlist microservice.')
     .setVersion(version)
+    .setBasePath('/watchlist')
     .addBearerAuth()
+    .addServer(`http://localhost:${port}`)
+    .addServer('http://cinepik.fun/watchlist')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('openapi', app, document);
+
+  // app.enableCors({ origin: `http://localhost:${port}` });
 
   // Enable DTO validation
   app.useGlobalPipes(new ValidationPipe());
